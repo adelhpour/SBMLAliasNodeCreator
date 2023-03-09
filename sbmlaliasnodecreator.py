@@ -12,6 +12,7 @@ class CreateAliasNode:
         if self.layout:
             highly_connected_species = self.get_highly_connected_species(maximum_number_of_connected_species_reference_glyphs)
 
+
     def get_highly_connected_species(self, maximum_number_of_connected_species_reference_glyphs):
         highly_connected_species = []
         for species_glyph_index in range(self.layout.getNumSpeciesGlyphs()):
@@ -25,7 +26,7 @@ class CreateAliasNode:
                     if species_reference_glyph.getSpeciesGlyphId() == species_glyph.getId():
                         number_of_connected_species_reference_glyphs += 1
             if number_of_connected_species_reference_glyphs > maximum_number_of_connected_species_reference_glyphs:
-                highly_connected_species.append({species_glyph.getId(), number_of_connected_species_reference_glyphs})
+                highly_connected_species.append({"id": species_glyph.getId(), "numConnectedSReferences": number_of_connected_species_reference_glyphs})
 
         return highly_connected_species
 
