@@ -70,6 +70,7 @@ class SBMLAliasNodeCreator:
                 connected_species_reference = species_info["connected_species_references"].pop()
                 connected_species_reference.setSpeciesGlyphId(alias_species_glyph.getId())
 
+
     @staticmethod
     def get_number_of_required_alias_species_glyphs(maximum_number_of_connected_species_reference_glyphs,
                                                     number_of_connected_species_references):
@@ -80,14 +81,29 @@ class SBMLAliasNodeCreator:
         return number_of_required_alias_species_glyphs
     def set_alias_species_glyph_mutual_features(self, alias_species_glyph, original_species_glyph):
         alias_species_glyph.setSpeciesId(original_species_glyph.getSpeciesId())
-        self.set_alias_species_glyph_bounding_box(alias_species_glyph, original_species_glyph.getBoundingBox())
+        self.set_alias_graphical_object_bounding_box(alias_species_glyph, original_species_glyph.getBoundingBox())
+        self.create_text_glyphs_of_alias_species_glyph(alias_species_glyph, original_species_glyph)
 
     @staticmethod
-    def set_alias_species_glyph_bounding_box(alias_species_glyph, bounding_box):
-        alias_species_glyph.getBoundingBox().setX(bounding_box.getX())
-        alias_species_glyph.getBoundingBox().setY(bounding_box.getY())
-        alias_species_glyph.getBoundingBox().setWidth(bounding_box.getWidth())
-        alias_species_glyph.getBoundingBox().setHeight(bounding_box.getHeight())
+    def set_alias_graphical_object_bounding_box(alias_graphical_object, bounding_box):
+        alias_graphical_object.getBoundingBox().setX(bounding_box.getX())
+        alias_graphical_object.getBoundingBox().setY(bounding_box.getY())
+        alias_graphical_object.getBoundingBox().setWidth(bounding_box.getWidth())
+        alias_graphical_object.getBoundingBox().setHeight(bounding_box.getHeight())
+
+    def create_text_glyphs_of_alias_species_glyph(self, alias_species_glyph, original_species_glyph):
+        for text_glyph_index in range(self.layout.getNumTextGlyphs()):
+            original_text_glyph = self.layout.getTextGlyph(text_glyph_index)
+            if original_text_glyph.getGraphicalObjectId() == original_species_glyph.getId():
+                alias_text_glyph = self.layout.createTextGlyph()
+                alias_text_glyph.setId(alias_species_glyph.getId() + "_text")
+                alias_text_glyph.setGraphicalObjectId(alias_species_glyph.getId())
+                self.set_alias_text_glyph_mutual_features(alias_text_glyph, original_text_glyph)
+
+    def set_alias_text_glyph_mutual_features(self, alias_text_glyph, original_text_glyph):
+        if original_text_glyph.isSetText():
+            alias_text_glyph.setText(original_text_glyph.getText())
+        self.set_alias_graphical_object_bounding_box(alias_text_glyph, original_text_glyph.getBoundingBox())
 
 
 
@@ -95,6 +111,6 @@ class SBMLAliasNodeCreator:
 
 
 
-doc = libsbml.readSBMLFromFile("/Users/home/Downloads/Model1.xml")
-SBMLAliasNodeCreator().create(doc.getModel(), 5)
-libsbml.writeSBMLToFile(doc, "/Users/home/Downloads/Model2.xml")
+doc = libsbml.readSBMLFromFile("/Users/home/Downloads/Model3.xml")
+SBMLAliasNodeCreator().create(doc.getModel(), 1)
+libsbml.writeSBMLToFile(doc, "/Users/home/Downloads/Model4.xml")
