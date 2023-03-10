@@ -1,3 +1,7 @@
-doc = libsbml.readSBMLFromFile("/Users/home/Downloads/Model3.xml")
-SBMLAliasNodeCreator().create(doc.getModel(), 1)
-libsbml.writeSBMLToFile(doc, "/Users/home/Downloads/Model4.xml")
+import libsbml
+from sbmlaliasnodecreator import SBMLAliasNodeCreator
+
+maximum_number_of_connected_nodes = 4
+doc = libsbml.readSBMLFromFile("example.xml")
+SBMLAliasNodeCreator().create(doc.getModel(), maximum_number_of_connected_nodes)
+libsbml.writeSBMLToFile(doc, "example.xml")
