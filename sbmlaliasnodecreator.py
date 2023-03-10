@@ -1,6 +1,3 @@
-import libsbml
-
-
 class SBMLAliasNodeCreator:
 
     def __init__(self):
@@ -17,10 +14,10 @@ class SBMLAliasNodeCreator:
 
     def extract_layout_render(self, model):
         #layout
-        if (!model)
+        if model = None
             raise SystemExit('Model does not exist.')
         layout_plugin = model.getPlugin('layout')
-        if (!layout_plugin)
+        if layout_plugin = None
             raise SystemExit('This model does not contains layout info.')
         number_of_layouts = layout_plugin.getNumLayouts()
         if number_of_layouts:
