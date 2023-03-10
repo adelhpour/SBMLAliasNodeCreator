@@ -5,22 +5,31 @@ class SBMLAliasNodeCreator:
 
     def __init__(self):
         self.layout = None
+        self.local_render = None
 
     def create(self, model, maximum_number_of_connected_species_reference_glyphs):
         if maximum_number_of_connected_species_reference_glyphs > 0:
-            self.extract_layout(model)
+            self.extract_layout_render(model)
             if self.layout:
                 list_of_highly_connected_species = self.get_highly_connected_species_glyphs(maximum_number_of_connected_species_reference_glyphs)
                 for highly_connected_species in list_of_highly_connected_species:
                     self.create_alias_species_glyphs(maximum_number_of_connected_species_reference_glyphs, highly_connected_species)
 
-    def extract_layout(self, model):
+    def extract_layout_render(self, model):
+        #layout
         self.check(model, "get model")
         layout_plugin = model.getPlugin('layout')
         self.check(layout_plugin, "get layout plugin")
         number_of_layouts = layout_plugin.getNumLayouts()
         if number_of_layouts:
              self.layout = layout_plugin.getLayout(0)
+
+        #render
+        render_plugin = self.layout.getPlugin("render")
+        self.check(render_plugin, "get render plugin")
+        number_of_local_renders = render_plugin.getNumLocalRenderInformationObjects()
+        if number_of_local_renders:
+            self.local_render = render_plugin.getRenderInformation(0)
 
     @staticmethod
     def check(value, message):
@@ -69,7 +78,6 @@ class SBMLAliasNodeCreator:
                     number_of_required_alias_species_glyphs - index_of_alias_species_glyphs + 1) * maximum_number_of_connected_species_reference_glyphs:
                 connected_species_reference = species_info["connected_species_references"].pop()
                 connected_species_reference.setSpeciesGlyphId(alias_species_glyph.getId())
-
 
     @staticmethod
     def get_number_of_required_alias_species_glyphs(maximum_number_of_connected_species_reference_glyphs,
