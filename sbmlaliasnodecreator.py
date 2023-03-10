@@ -17,34 +17,20 @@ class SBMLAliasNodeCreator:
 
     def extract_layout_render(self, model):
         #layout
-        self.check(model, "get model")
+        if (!model)
+            raise SystemExit('Model does not exist.')
         layout_plugin = model.getPlugin('layout')
-        self.check(layout_plugin, "get layout plugin")
+        if (!layout_plugin)
+            raise SystemExit('This model does not contains layout info.')
         number_of_layouts = layout_plugin.getNumLayouts()
         if number_of_layouts:
              self.layout = layout_plugin.getLayout(0)
 
         #render
         render_plugin = self.layout.getPlugin("render")
-        self.check(render_plugin, "get render plugin")
         number_of_local_renders = render_plugin.getNumLocalRenderInformationObjects()
         if number_of_local_renders:
             self.local_render = render_plugin.getRenderInformation(0)
-
-    @staticmethod
-    def check(value, message):
-        if value == None:
-            raise SystemExit('LibSBML returned a null value trying to ' + message + '.')
-        elif type(value) is int:
-            if value == libsbml.LIBSBML_OPERATION_SUCCESS:
-                return
-            else:
-                err_msg = 'Error encountered trying to ' + message + '.' \
-                          + 'LibSBML returned error code ' + str(value) + ': "' \
-                          + OperationReturnValue_toString(value).strip() + '"'
-                raise SystemExit(err_msg)
-        else:
-            return
 
     def get_highly_connected_species_glyphs(self, maximum_number_of_connected_nodes):
         highly_connected_species = []
