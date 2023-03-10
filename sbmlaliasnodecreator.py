@@ -90,14 +90,24 @@ class SBMLAliasNodeCreator:
     def set_alias_species_glyph_mutual_features(self, alias_species_glyph, original_species_glyph):
         alias_species_glyph.setSpeciesId(original_species_glyph.getSpeciesId())
         self.set_alias_graphical_object_bounding_box(alias_species_glyph, original_species_glyph.getBoundingBox())
+        self.set_alias_graphical_object_style(alias_species_glyph, original_species_glyph)
         self.create_text_glyphs_of_alias_species_glyph(alias_species_glyph, original_species_glyph)
 
     @staticmethod
     def set_alias_graphical_object_bounding_box(alias_graphical_object, bounding_box):
-        alias_graphical_object.getBoundingBox().setX(bounding_box.getX())
-        alias_graphical_object.getBoundingBox().setY(bounding_box.getY())
+        padding_x = 10.0
+        padding_y = 10.0
+        alias_graphical_object.getBoundingBox().setX(bounding_box.getX() + padding_x)
+        alias_graphical_object.getBoundingBox().setY(bounding_box.getY() + padding_y)
         alias_graphical_object.getBoundingBox().setWidth(bounding_box.getWidth())
         alias_graphical_object.getBoundingBox().setHeight(bounding_box.getHeight())
+
+    def set_alias_graphical_object_style(self, alias_graphical_object, original_graphical_object):
+        if self.local_render:
+            for local_style_index in range(self.local_render.getNumStyles()):
+                local_style = self.local_render.getStyle(local_style_index)
+                if local_style.getIdList().has_key(original_graphical_object.getId()):
+                    local_style.addId(alias_graphical_object.getId())
 
     def create_text_glyphs_of_alias_species_glyph(self, alias_species_glyph, original_species_glyph):
         for text_glyph_index in range(self.layout.getNumTextGlyphs()):
@@ -112,6 +122,7 @@ class SBMLAliasNodeCreator:
         if original_text_glyph.isSetText():
             alias_text_glyph.setText(original_text_glyph.getText())
         self.set_alias_graphical_object_bounding_box(alias_text_glyph, original_text_glyph.getBoundingBox())
+        self.set_alias_graphical_object_style(alias_text_glyph, original_text_glyph)
 
 
 
