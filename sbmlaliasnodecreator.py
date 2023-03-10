@@ -108,3 +108,5 @@ class SBMLAliasNodeCreator:
             alias_text_glyph.setText(original_text_glyph.getText())
         self.set_alias_graphical_object_bounding_box(alias_text_glyph, original_text_glyph.getBoundingBox(), index_of_alias_species_glyph)
         self.set_alias_graphical_object_style(alias_text_glyph, original_text_glyph)
+
+ 
