@@ -14,11 +14,11 @@ class SBMLAliasNodeCreator:
 
     def extract_layout_render(self, model):
         #layout
-        if model = None
+        if model == None:
             raise SystemExit('Model does not exist.')
         layout_plugin = model.getPlugin('layout')
-        if layout_plugin = None
-            raise SystemExit('This model does not contains layout info.')
+        if layout_plugin == None:
+            raise SystemExit('This model does not contain layout info.')
         number_of_layouts = layout_plugin.getNumLayouts()
         if number_of_layouts:
              self.layout = layout_plugin.getLayout(0)
@@ -55,8 +55,8 @@ class SBMLAliasNodeCreator:
             maximum_number_of_connected_species_reference_glyphs, species_info["connected_species_references"])
         for index_of_alias_species_glyphs in range(1, number_of_required_alias_species_glyphs + 1):
             alias_species_glyph = self.layout.createSpeciesGlyph()
-            alias_species_glyph.setId(species_info["id"] + "_" + str(index_of_alias_species_glyphs))
-            self.set_alias_species_glyph_mutual_features(alias_species_glyph, original_species_glyph)
+            alias_species_glyph.setId(species_info["id"] + "_alias_" + str(index_of_alias_species_glyphs))
+            self.set_alias_species_glyph_mutual_features(alias_species_glyph, original_species_glyph, index_of_alias_species_glyphs)
             while len(species_info["connected_species_references"]) > (
                     number_of_required_alias_species_glyphs - index_of_alias_species_glyphs + 1) * maximum_number_of_connected_species_reference_glyphs:
                 connected_species_reference = species_info["connected_species_references"].pop()
@@ -72,16 +72,16 @@ class SBMLAliasNodeCreator:
 
         return number_of_required_alias_species_glyphs
 
-    def set_alias_species_glyph_mutual_features(self, alias_species_glyph, original_species_glyph):
+    def set_alias_species_glyph_mutual_features(self, alias_species_glyph, original_species_glyph, index_of_alias_species_glyph):
         alias_species_glyph.setSpeciesId(original_species_glyph.getSpeciesId())
-        self.set_alias_graphical_object_bounding_box(alias_species_glyph, original_species_glyph.getBoundingBox())
+        self.set_alias_graphical_object_bounding_box(alias_species_glyph, original_species_glyph.getBoundingBox(), index_of_alias_species_glyph)
         self.set_alias_graphical_object_style(alias_species_glyph, original_species_glyph)
-        self.create_alias_species_glyph_text_glyphs(alias_species_glyph, original_species_glyph)
+        self.create_alias_species_glyph_text_glyphs(alias_species_glyph, original_species_glyph, index_of_alias_species_glyph)
 
     @staticmethod
-    def set_alias_graphical_object_bounding_box(alias_graphical_object, bounding_box):
-        padding_x = 10.0
-        padding_y = 10.0
+    def set_alias_graphical_object_bounding_box(alias_graphical_object, bounding_box, index_of_graphical_object = 0):
+        padding_x = 10.0 * index_of_graphical_object
+        padding_y = 10.0 * index_of_graphical_object
         alias_graphical_object.getBoundingBox().setX(bounding_box.getX() + padding_x)
         alias_graphical_object.getBoundingBox().setY(bounding_box.getY() + padding_y)
         alias_graphical_object.getBoundingBox().setWidth(bounding_box.getWidth())
@@ -94,17 +94,17 @@ class SBMLAliasNodeCreator:
                 if local_style.getIdList().has_key(original_graphical_object.getId()):
                     local_style.addId(alias_graphical_object.getId())
 
-    def create_alias_species_glyph_text_glyphs(self, alias_species_glyph, original_species_glyph):
+    def create_alias_species_glyph_text_glyphs(self, alias_species_glyph, original_species_glyph, index_of_alias_species_glyph):
         for text_glyph_index in range(self.layout.getNumTextGlyphs()):
             original_text_glyph = self.layout.getTextGlyph(text_glyph_index)
             if original_text_glyph.getGraphicalObjectId() == original_species_glyph.getId():
                 alias_text_glyph = self.layout.createTextGlyph()
                 alias_text_glyph.setId(alias_species_glyph.getId() + "_text")
                 alias_text_glyph.setGraphicalObjectId(alias_species_glyph.getId())
-                self.set_alias_text_glyph_mutual_features(alias_text_glyph, original_text_glyph)
+                self.set_alias_text_glyph_mutual_features(alias_text_glyph, original_text_glyph, index_of_alias_species_glyph)
 
-    def set_alias_text_glyph_mutual_features(self, alias_text_glyph, original_text_glyph):
+    def set_alias_text_glyph_mutual_features(self, alias_text_glyph, original_text_glyph, index_of_alias_species_glyph):
         if original_text_glyph.isSetText():
             alias_text_glyph.setText(original_text_glyph.getText())
-        self.set_alias_graphical_object_bounding_box(alias_text_glyph, original_text_glyph.getBoundingBox())
+        self.set_alias_graphical_object_bounding_box(alias_text_glyph, original_text_glyph.getBoundingBox(), index_of_alias_species_glyph)
         self.set_alias_graphical_object_style(alias_text_glyph, original_text_glyph)
