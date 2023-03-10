@@ -22,7 +22,6 @@ class SBMLAliasNodeCreator:
         number_of_layouts = layout_plugin.getNumLayouts()
         if number_of_layouts:
              self.layout = layout_plugin.getLayout(0)
-
         #render
         render_plugin = self.layout.getPlugin("render")
         number_of_local_renders = render_plugin.getNumLocalRenderInformationObjects()
