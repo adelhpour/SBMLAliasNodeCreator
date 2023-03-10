@@ -7,13 +7,13 @@ class SBMLAliasNodeCreator:
         self.layout = None
         self.local_render = None
 
-    def create(self, model, maximum_number_of_connected_species_reference_glyphs):
-        if maximum_number_of_connected_species_reference_glyphs > 0:
+    def create(self, model, maximum_number_of_connected_nodes):
+        if maximum_number_of_connected_nodes > 0:
             self.extract_layout_render(model)
             if self.layout:
-                list_of_highly_connected_species = self.get_highly_connected_species_glyphs(maximum_number_of_connected_species_reference_glyphs)
-                for highly_connected_species in list_of_highly_connected_species:
-                    self.create_alias_species_glyphs(maximum_number_of_connected_species_reference_glyphs, highly_connected_species)
+                highly_connected_species_glyphs = self.get_highly_connected_species_glyphs(maximum_number_of_connected_nodes)
+                for highly_connected_species_glyph in highly_connected_species_glyphs:
+                    self.create_alias_species_glyphs(maximum_number_of_connected_nodes, highly_connected_species_glyph)
 
     def extract_layout_render(self, model):
         #layout
@@ -46,7 +46,7 @@ class SBMLAliasNodeCreator:
         else:
             return
 
-    def get_highly_connected_species_glyphs(self, maximum_number_of_connected_species_reference_glyphs):
+    def get_highly_connected_species_glyphs(self, maximum_number_of_connected_nodes):
         highly_connected_species = []
         for species_glyph_index in range(self.layout.getNumSpeciesGlyphs()):
             connected_species_references = []
@@ -60,7 +60,7 @@ class SBMLAliasNodeCreator:
                     if species_reference_glyph.getSpeciesGlyphId() == species_glyph.getId():
                         connected_species_references.append(species_reference_glyph)
                         number_of_connected_species_reference_glyphs += 1
-            if number_of_connected_species_reference_glyphs > maximum_number_of_connected_species_reference_glyphs:
+            if number_of_connected_species_reference_glyphs > maximum_number_of_connected_nodes:
                 highly_connected_species.append({"id": species_glyph.getId(),
                                                  "connected_species_references": connected_species_references})
 
@@ -86,12 +86,14 @@ class SBMLAliasNodeCreator:
             number_of_connected_species_references) // maximum_number_of_connected_species_reference_glyphs
         if len(number_of_connected_species_references) % maximum_number_of_connected_species_reference_glyphs == 0:
             number_of_required_alias_species_glyphs -= 1
+
         return number_of_required_alias_species_glyphs
+
     def set_alias_species_glyph_mutual_features(self, alias_species_glyph, original_species_glyph):
         alias_species_glyph.setSpeciesId(original_species_glyph.getSpeciesId())
         self.set_alias_graphical_object_bounding_box(alias_species_glyph, original_species_glyph.getBoundingBox())
         self.set_alias_graphical_object_style(alias_species_glyph, original_species_glyph)
-        self.create_text_glyphs_of_alias_species_glyph(alias_species_glyph, original_species_glyph)
+        self.create_alias_species_glyph_text_glyphs(alias_species_glyph, original_species_glyph)
 
     @staticmethod
     def set_alias_graphical_object_bounding_box(alias_graphical_object, bounding_box):
@@ -109,7 +111,7 @@ class SBMLAliasNodeCreator:
                 if local_style.getIdList().has_key(original_graphical_object.getId()):
                     local_style.addId(alias_graphical_object.getId())
 
-    def create_text_glyphs_of_alias_species_glyph(self, alias_species_glyph, original_species_glyph):
+    def create_alias_species_glyph_text_glyphs(self, alias_species_glyph, original_species_glyph):
         for text_glyph_index in range(self.layout.getNumTextGlyphs()):
             original_text_glyph = self.layout.getTextGlyph(text_glyph_index)
             if original_text_glyph.getGraphicalObjectId() == original_species_glyph.getId():
@@ -123,13 +125,3 @@ class SBMLAliasNodeCreator:
             alias_text_glyph.setText(original_text_glyph.getText())
         self.set_alias_graphical_object_bounding_box(alias_text_glyph, original_text_glyph.getBoundingBox())
         self.set_alias_graphical_object_style(alias_text_glyph, original_text_glyph)
-
-
-
-
-
-
-
-doc = libsbml.readSBMLFromFile("/Users/home/Downloads/Model3.xml")
-SBMLAliasNodeCreator().create(doc.getModel(), 1)
-libsbml.writeSBMLToFile(doc, "/Users/home/Downloads/Model4.xml")
