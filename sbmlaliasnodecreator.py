@@ -34,9 +34,9 @@ class SBMLAliasNodeCreator:
         if number_of_local_renders:
             self.local_render = render_plugin.getRenderInformation(0)
 
-    def get_specified_highly_connected_species_glyphs(self, targeted_species_glyphs):
+    def get_specified_highly_connected_species_glyphs(self, targeted_species):
         highly_connected_species_glyphs = []
-        for species_glyph in targeted_species_glyphs:
+        for species_glyph in targeted_species:
             species_glyph_id = list(species_glyph.keys())[0]
             connected_species_references = self.get_connected_species_references(species_glyph_id)
             if len(connected_species_references) > species_glyph[species_glyph_id]:
