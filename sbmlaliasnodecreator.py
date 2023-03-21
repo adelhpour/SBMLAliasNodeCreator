@@ -4,13 +4,18 @@ class SBMLAliasNodeCreator:
         self.layout = None
         self.local_render = None
 
-    def create(self, model, maximum_number_of_connected_nodes):
-        if maximum_number_of_connected_nodes > 0:
-            self.extract_layout_render(model)
-            if self.layout:
-                highly_connected_species_glyphs = self.get_highly_connected_species_glyphs(maximum_number_of_connected_nodes)
-                for highly_connected_species_glyph in highly_connected_species_glyphs:
-                    self.create_alias_species_glyphs(maximum_number_of_connected_nodes, highly_connected_species_glyph)
+    def create_alias(self, model, targeted_species_glyphs=None, maximum_number_of_connected_nodes=0):
+        self.extract_layout_render(model)
+        if self.layout:
+            highly_connected_species_glyphs = []
+            if targeted_species_glyphs:
+                highly_connected_species_glyphs = self.get_specified_highly_connected_species_glyphs(
+                    targeted_species_glyphs)
+            else:
+                highly_connected_species_glyphs = self.get_all_highly_connected_species_glyphs(
+                    maximum_number_of_connected_nodes)
+            for highly_connected_species_glyph in highly_connected_species_glyphs:
+                self.create_alias_species_glyphs(highly_connected_species_glyph)
 
     def extract_layout_render(self, model):
         #layout
