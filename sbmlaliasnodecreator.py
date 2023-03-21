@@ -57,18 +57,17 @@ class SBMLAliasNodeCreator:
 
         return highly_connected_species_glyphs
 
-    def create_alias_species_glyphs(self, maximum_number_of_connected_species_reference_glyphs, species_info):
-        original_species_glyph = self.layout.getSpeciesGlyph(species_info["id"])
-        number_of_required_alias_species_glyphs = self.get_number_of_required_alias_species_glyphs(
-            maximum_number_of_connected_species_reference_glyphs, species_info["connected_species_references"])
-        for index_of_alias_species_glyphs in range(1, number_of_required_alias_species_glyphs + 1):
-            alias_species_glyph = self.layout.createSpeciesGlyph()
-            alias_species_glyph.setId(species_info["id"] + "_alias_" + str(index_of_alias_species_glyphs))
-            self.set_alias_species_glyph_mutual_features(alias_species_glyph, original_species_glyph, index_of_alias_species_glyphs)
-            while len(species_info["connected_species_references"]) > (
-                    number_of_required_alias_species_glyphs - index_of_alias_species_glyphs + 1) * maximum_number_of_connected_species_reference_glyphs:
-                connected_species_reference = species_info["connected_species_references"].pop()
-                connected_species_reference.setSpeciesGlyphId(alias_species_glyph.getId())
+    def get_connected_species_references(self, species_glyph_id):
+        connected_species_references = []
+        for reaction_glyph_index in range(self.layout.getNumReactionGlyphs()):
+            reaction_glyph = self.layout.getReactionGlyph(reaction_glyph_index)
+            for species_reference_glyph_index in range(reaction_glyph.getNumSpeciesReferenceGlyphs()):
+                species_reference_glyph = reaction_glyph.getSpeciesReferenceGlyph(
+                    species_reference_glyph_index)
+                if species_reference_glyph.getSpeciesGlyphId() == species_glyph_id:
+                    connected_species_references.append(species_reference_glyph)
+
+        return connected_species_references
 
     @staticmethod
     def get_number_of_required_alias_species_glyphs(maximum_number_of_connected_species_reference_glyphs,
