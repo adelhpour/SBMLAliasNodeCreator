@@ -89,6 +89,7 @@ class SBMLAliasNodeCreator:
             number_of_connected_species_references) // maximum_number_of_connected_species_reference_glyphs
         if len(number_of_connected_species_references) % maximum_number_of_connected_species_reference_glyphs == 0:
             number_of_required_alias_species_glyphs -= 1
+
         return number_of_required_alias_species_glyphs
 
     def set_alias_species_glyph_mutual_features(self, alias_species_glyph, original_species_glyph, index_of_alias_species_glyph):
