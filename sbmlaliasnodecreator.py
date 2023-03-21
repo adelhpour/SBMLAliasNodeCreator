@@ -18,7 +18,7 @@ class SBMLAliasNodeCreator:
                 self.create_alias_species_glyphs(highly_connected_species_glyph)
 
     def extract_layout_render(self, model):
-        #layout
+        # layout
         if model == None:
             raise SystemExit('Model does not exist.')
         layout_plugin = model.getPlugin('layout')
@@ -26,8 +26,9 @@ class SBMLAliasNodeCreator:
             raise SystemExit('This model does not contain layout info.')
         number_of_layouts = layout_plugin.getNumLayouts()
         if number_of_layouts:
-             self.layout = layout_plugin.getLayout(0)
-        #render
+            self.layout = layout_plugin.getLayout(0)
+
+        # render
         render_plugin = self.layout.getPlugin("render")
         number_of_local_renders = render_plugin.getNumLocalRenderInformationObjects()
         if number_of_local_renders:
