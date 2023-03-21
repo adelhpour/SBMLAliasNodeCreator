@@ -69,6 +69,19 @@ class SBMLAliasNodeCreator:
 
         return connected_species_references
 
+    def create_alias_species_glyphs(self, species_info):
+        original_species_glyph = self.layout.getSpeciesGlyph(species_info["id"])
+        number_of_required_alias_species_glyphs = self.get_number_of_required_alias_species_glyphs(
+            species_info["maximum_number_of_connected_nodes"], species_info["connected_species_references"])
+        for index_of_alias_species_glyphs in range(1, number_of_required_alias_species_glyphs + 1):
+            alias_species_glyph = self.layout.createSpeciesGlyph()
+            alias_species_glyph.setId(species_info["id"] + "_alias_" + str(index_of_alias_species_glyphs))
+            self.set_alias_species_glyph_mutual_features(alias_species_glyph, original_species_glyph, index_of_alias_species_glyphs)
+            while len(species_info["connected_species_references"]) > (
+                    number_of_required_alias_species_glyphs - index_of_alias_species_glyphs + 1) * species_info["maximum_number_of_connected_nodes"]:
+                connected_species_reference = species_info["connected_species_references"].pop()
+                connected_species_reference.setSpeciesGlyphId(alias_species_glyph.getId())
+
     @staticmethod
     def get_number_of_required_alias_species_glyphs(maximum_number_of_connected_species_reference_glyphs,
                                                     number_of_connected_species_references):
