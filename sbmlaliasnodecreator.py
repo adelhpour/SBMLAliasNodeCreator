@@ -36,11 +36,11 @@ class SBMLAliasNodeCreator:
 
     def get_specified_highly_connected_species_glyphs(self, targeted_species):
         highly_connected_species_glyphs = []
-        for species in targeted_species:
-            species_glyph_id = list(species.keys())[0]
-            connected_species_references = self.get_connected_species_references(species_glyph_id)
-            if len(connected_species_references) > species[species_glyph_id]:
-                highly_connected_species_glyphs.append({"id": species_glyph_id, "maximum_number_of_connected_nodes": species[species_glyph_id], "connected_species_references": connected_species_references})
+        for species_glyph in targeted_species:
+            species_id = list(species_glyph.keys())[0]
+            connected_species_references = self.get_connected_species_references(species_id)
+            if len(connected_species_references) > species_glyph[species_id]:
+                highly_connected_species_glyphs.append({"id": species_id, "maximum_number_of_connected_nodes": species_glyph[species_id], "connected_species_references": connected_species_references})
 
         return highly_connected_species_glyphs
 
