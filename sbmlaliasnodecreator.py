@@ -1,26 +1,32 @@
+import libsbml
+import SBMLDiagrams
+
 class SBMLAliasNodeCreator:
 
     def __init__(self):
+        self.document = None
         self.layout = None
         self.local_render = None
 
-    def create_alias(self, model, targeted_species_glyphs=None, maximum_number_of_connected_nodes=0):
-        self.extract_layout_render(model)
-        if self.layout:
-            highly_connected_species_glyphs = []
-            if targeted_species_glyphs:
-                highly_connected_species_glyphs = self.get_specified_highly_connected_species_glyphs(
-                    targeted_species_glyphs)
-            else:
-                highly_connected_species_glyphs = self.get_all_highly_connected_species_glyphs(
-                    maximum_number_of_connected_nodes)
-            for highly_connected_species_glyph in highly_connected_species_glyphs:
-                self.create_alias_species_glyphs(highly_connected_species_glyph)
+    def load(self, input_sbml_file_name):
+        sb = SBMLDiagrams.load(input_sbml_file_name)
+        sb.autolayout()
+        sbml_str = sb.export()
+        reader = libsbml.SBMLReader()
+        self.document = reader.readSBMLFromString(sbml_str)
+        self.extract_layout_render()
 
-    def extract_layout_render(self, model):
+    def export(self, output_sbml_file_name):
+        libsbml.writeSBMLToFile(self.document, output_sbml_file_name)
+
+    def extract_layout_render(self):
+        if self.document == None:
+            raise SystemExit('SBML document could not be loaded.')
+        model = self.document.getModel()
         # layout
         if model == None:
             raise SystemExit('Model does not exist.')
+
         layout_plugin = model.getPlugin('layout')
         if layout_plugin == None:
             raise SystemExit('This model does not contain layout info.')
@@ -33,6 +39,18 @@ class SBMLAliasNodeCreator:
         number_of_local_renders = render_plugin.getNumLocalRenderInformationObjects()
         if number_of_local_renders:
             self.local_render = render_plugin.getRenderInformation(0)
+
+    def create_alias(self, targeted_species_glyphs=None, maximum_number_of_connected_nodes=0):
+        if self.layout:
+            highly_connected_species_glyphs = []
+            if targeted_species_glyphs:
+                highly_connected_species_glyphs = self.get_specified_highly_connected_species_glyphs(
+                    targeted_species_glyphs)
+            else:
+                highly_connected_species_glyphs = self.get_all_highly_connected_species_glyphs(
+                    maximum_number_of_connected_nodes)
+            for highly_connected_species_glyph in highly_connected_species_glyphs:
+                self.create_alias_species_glyphs(highly_connected_species_glyph)
 
     def get_specified_highly_connected_species_glyphs(self, targeted_species):
         highly_connected_species_glyphs = []
