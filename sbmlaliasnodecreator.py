@@ -37,12 +37,10 @@ class SBMLAliasNodeCreator:
     def get_specified_highly_connected_species_glyphs(self, targeted_species):
         highly_connected_species_glyphs = []
         for species in targeted_species:
-            species_id = list(species.keys())[0]
-            connected_species_references = []
-            connected_species_references += self.get_connected_species_references(species_id)
-            connected_species_references += self.get_connected_species_references(self.get_species_glyph_from_species_id(species_id))
-            if len(connected_species_references) > species[species_id]:
-                highly_connected_species_glyphs.append({"id": species_id, "maximum_number_of_connected_nodes": species[species_id], "connected_species_references": connected_species_references})
+            targeted_species = list(species.keys())[0]
+            connected_species_references = self.get_connected_species_references(self.get_species_glyph_id(targeted_species))
+            if len(connected_species_references) > species[targeted_species]:
+                highly_connected_species_glyphs.append({"id": self.get_species_glyph_id(targeted_species), "maximum_number_of_connected_nodes": species[targeted_species], "connected_species_references": connected_species_references})
 
         return highly_connected_species_glyphs
 
@@ -71,11 +69,22 @@ class SBMLAliasNodeCreator:
 
         return connected_species_references
 
-    def get_species_glyph_from_species_id(self, species_id):
+    def get_species_glyph_id(self, name):
         for species_glyph_index in range(self.layout.getNumSpeciesGlyphs()):
             species_glyph = self.layout.getSpeciesGlyph(species_glyph_index)
-            if species_glyph.getSpeciesId() == species_id:
+            if species_glyph.getSpeciesId() == name:
+                return species_glyph.getSpeciesId()
+            elif species_glyph.getId() == name:
                 return species_glyph.getId()
+            else:
+                return self.get_species_glyph_from_species_text_glyphs(name)
+
+    def get_species_glyph_from_species_text_glyphs(self, text):
+        for text_glyph_index in range(self.layout.getNumTextGlyphs()):
+            text_glyph = self.layout.getTextGlyph(text_glyph_index)
+            if text_glyph.isSetText() and text_glyph.getText() == text:
+                if text_glyph.isSetGraphicalObjectId():
+                    return text_glyph.getGraphicalObjectId()
 
         return ""
 
