@@ -93,9 +93,7 @@ class SBMLAliasNodeCreator:
     def get_species_glyph_id(self, name):
         for species_glyph_index in range(self.layout.getNumSpeciesGlyphs()):
             species_glyph = self.layout.getSpeciesGlyph(species_glyph_index)
-            if species_glyph.getSpeciesId() == name:
-                return species_glyph.getSpeciesId()
-            elif species_glyph.getId() == name:
+            if species_glyph.getSpeciesId() == name or species_glyph.getId() == name:
                 return species_glyph.getId()
             else:
                 return self.get_species_glyph_from_species_text_glyphs(name)
