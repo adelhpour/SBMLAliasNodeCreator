@@ -9,36 +9,39 @@ class SBMLAliasNodeCreator:
         self.local_render = None
 
     def load(self, input_sbml_file_name):
-        sb = SBMLDiagrams.load(input_sbml_file_name)
-        sb.autolayout()
-        sbml_str = sb.export()
-        reader = libsbml.SBMLReader()
-        self.document = reader.readSBMLFromString(sbml_str)
+        self.document = libsbml.readSBMLFromFile(input_sbml_file_name)
         self.extract_layout_render()
+        if self.layout is None:
+            sb = SBMLDiagrams.load(input_sbml_file_name)
+            sb.autolayout()
+            sbml_str = sb.export()
+            reader = libsbml.SBMLReader()
+            self.document = reader.readSBMLFromString(sbml_str)
+            self.extract_layout_render()
 
     def export(self, output_sbml_file_name):
         libsbml.writeSBMLToFile(self.document, output_sbml_file_name)
 
     def extract_layout_render(self):
-        if self.document == None:
+        if self.document is None:
             raise SystemExit('SBML document could not be loaded.')
         model = self.document.getModel()
-        # layout
-        if model == None:
+        if model is None:
             raise SystemExit('Model does not exist.')
 
+        # layout
         layout_plugin = model.getPlugin('layout')
-        if layout_plugin == None:
-            raise SystemExit('This model does not contain layout info.')
-        number_of_layouts = layout_plugin.getNumLayouts()
-        if number_of_layouts:
-            self.layout = layout_plugin.getLayout(0)
+        if layout_plugin is not None:
+            number_of_layouts = layout_plugin.getNumLayouts()
+            if number_of_layouts:
+                self.layout = layout_plugin.getLayout(0)
 
         # render
-        render_plugin = self.layout.getPlugin("render")
-        number_of_local_renders = render_plugin.getNumLocalRenderInformationObjects()
-        if number_of_local_renders:
-            self.local_render = render_plugin.getRenderInformation(0)
+        if self.layout is not None:
+            render_plugin = self.layout.getPlugin("render")
+            number_of_local_renders = render_plugin.getNumLocalRenderInformationObjects()
+            if number_of_local_renders:
+                self.local_render = render_plugin.getRenderInformation(0)
 
     def create_alias(self, targeted_species_glyphs=None, maximum_number_of_connected_nodes=0):
         if self.layout:
