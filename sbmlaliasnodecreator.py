@@ -8,8 +8,11 @@ class SBMLAliasNodeCreator:
         self.layout = None
         self.local_render = None
 
-    def load(self, input_sbml_file_name):
-        self.document = libsbml.readSBMLFromFile(input_sbml_file_name)
+    def load(self, input_sbml_file_name="", sbml_string=""):
+        if input_sbml_file_name:
+            self.document = libsbml.readSBMLFromFile(input_sbml_file_name)
+        elif sbml_string:
+            self.document = libsbml.readSBMLFromString(sbml_string)
         self.extract_layout_render()
         if self.layout is None:
             sb = SBMLDiagrams.load(input_sbml_file_name)
