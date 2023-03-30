@@ -48,38 +48,38 @@ class SBMLAliasNodeCreator:
 
     def create_alias(self, targeted_species_glyphs=None, maximum_number_of_connected_nodes=0):
         if self.layout:
-            highly_connected_species_glyphs = []
+            heavily_connected_species_glyphs = []
             if targeted_species_glyphs:
-                highly_connected_species_glyphs = self.get_specified_highly_connected_species_glyphs(
+                heavily_connected_species_glyphs = self.get_specified_heavily_connected_species_glyphs(
                     targeted_species_glyphs)
             else:
-                highly_connected_species_glyphs = self.get_all_highly_connected_species_glyphs(
+                heavily_connected_species_glyphs = self.get_all_heavily_connected_species_glyphs(
                     maximum_number_of_connected_nodes)
-            for highly_connected_species_glyph in highly_connected_species_glyphs:
-                self.create_alias_species_glyphs(highly_connected_species_glyph)
+            for heavily_connected_species_glyph in heavily_connected_species_glyphs:
+                self.create_alias_species_glyphs(heavily_connected_species_glyph)
 
-    def get_specified_highly_connected_species_glyphs(self, targeted_species):
-        highly_connected_species_glyphs = []
+    def get_specified_heavily_connected_species_glyphs(self, targeted_species):
+        heavily_connected_species_glyphs = []
         for species in targeted_species:
             targeted_species = list(species.keys())[0]
             connected_species_references = self.get_connected_species_references(self.get_species_glyph_id(targeted_species))
             if len(connected_species_references) > species[targeted_species]:
-                highly_connected_species_glyphs.append({"id": self.get_species_glyph_id(targeted_species), "maximum_number_of_connected_nodes": species[targeted_species], "connected_species_references": connected_species_references})
+                heavily_connected_species_glyphs.append({"id": self.get_species_glyph_id(targeted_species), "maximum_number_of_connected_nodes": species[targeted_species], "connected_species_references": connected_species_references})
 
-        return highly_connected_species_glyphs
+        return heavily_connected_species_glyphs
 
-    def get_all_highly_connected_species_glyphs(self, maximum_number_of_connected_nodes):
-        highly_connected_species_glyphs = []
+    def get_all_heavily_connected_species_glyphs(self, maximum_number_of_connected_nodes):
+        heavily_connected_species_glyphs = []
         if maximum_number_of_connected_nodes > 0:
             for species_glyph_index in range(self.layout.getNumSpeciesGlyphs()):
                 species_glyph_id = self.layout.getSpeciesGlyph(species_glyph_index).getId();
                 connected_species_references = self.get_connected_species_references(species_glyph_id)
                 if len(connected_species_references) > maximum_number_of_connected_nodes:
-                    highly_connected_species_glyphs.append(
+                    heavily_connected_species_glyphs.append(
                         {"id": species_glyph_id, "maximum_number_of_connected_nodes": maximum_number_of_connected_nodes,
                          "connected_species_references": connected_species_references})
 
-        return highly_connected_species_glyphs
+        return heavily_connected_species_glyphs
 
     def get_connected_species_references(self, species_glyph_id):
         connected_species_references = []
