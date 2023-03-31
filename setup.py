@@ -3,7 +3,7 @@ from setuptools import find_packages
 
 MAJOR = 0
 MINOR = 0
-MICRO = 3
+MICRO = 4
 
 version = f'{MAJOR}.{MINOR}.{MICRO}'
 
@@ -27,7 +27,7 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    install_requires=["os", "python-libsbml", "SBMLDiagrams==1.3.2"],
+    install_requires=["python-libsbml", "SBMLDiagrams==1.3.2"],
     scripts=["testcases/example1.py", "testcases/example2.py"],
     package_dir={"": "src"},
     packages=find_packages(where="src"),
