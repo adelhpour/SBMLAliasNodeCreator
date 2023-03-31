@@ -1,5 +1,4 @@
 from sbmlaliasnodecreator import SBMLAliasNodeCreator
-import libsbml
 
 sbml_string = "sbml_string_input"
 maximum_number_of_connected_nodes = 4
