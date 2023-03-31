@@ -27,7 +27,7 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    install_requires=["lisbml", "SBMLDiagrams"],
+    install_requires=["os", "libsbml", "SBMLDiagrams==1.3.2"],
     scripts=["testcases/example1.py", "testcases/example2.py"],
     package_dir={"": "src"},
     packages=find_packages(where="src"),
