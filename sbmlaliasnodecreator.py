@@ -1,5 +1,5 @@
 import libsbml
-import SBMLDiagrams
+import libsbne as sbne
 
 class SBMLAliasNodeCreator:
 
@@ -15,15 +15,22 @@ class SBMLAliasNodeCreator:
             self.document = libsbml.readSBMLFromString(sbml_string)
         self.extract_layout_render()
         if self.layout is None:
-            sb = SBMLDiagrams.load(input_sbml_file_name)
-            sb.autolayout()
-            sbml_str = sb.export()
-            reader = libsbml.SBMLReader()
-            self.document = reader.readSBMLFromString(sbml_str)
+            self.add_layout_render(input_sbml_file_name)
             self.extract_layout_render()
 
     def export(self, output_sbml_file_name):
         libsbml.writeSBMLToFile(self.document, output_sbml_file_name)
+
+    def add_layout_render(self, input_sbml_file_name):
+        self.document = sbne.ne_doc_readSBML(input_sbml_file_name)
+        layout_info = sbne.ne_doc_processLayoutInfo(self.document)
+        if not sbne.ne_net_isLayoutSpecified(sbne.ne_li_getNetwork(layout_info)):
+            sbne.ne_li_addLayoutFeaturesToNetowrk(layout_info)
+        sbne.ne_doc_populateSBMLdocWithLayoutInfo(self.document, layout_info)
+        render_info = sbne.ne_doc_processRenderInfo(self.document)
+        if not sbne.ne_ven_isRenderSpecified(sbne.ne_ri_getVeneer(render_info)):
+            sbne.ne_ri_addDefaultRenderFeaturesToVeneer(render_info)
+        self.document = sbne.ne_doc_populateSBMLdocWithRenderInfo(self.document, render_info)
 
     def extract_layout_render(self):
         if self.document is None:
