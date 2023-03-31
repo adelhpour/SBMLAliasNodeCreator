@@ -53,10 +53,10 @@ class SBMLAliasNodeCreator:
             if number_of_local_renders:
                 self.local_render = render_plugin.getRenderInformation(0)
 
-    def create_alias(self, targeted_species_glyphs=None, maximum_number_of_connected_nodes=0):
+    def create_alias(self, maximum_number_of_connected_nodes=0, targeted_species_glyphs=[]):
         if self.layout:
             heavily_connected_species_glyphs = []
-            if targeted_species_glyphs:
+            if len(targeted_species_glyphs):
                 heavily_connected_species_glyphs = self.get_specified_heavily_connected_species_glyphs(
                     targeted_species_glyphs)
             else:
